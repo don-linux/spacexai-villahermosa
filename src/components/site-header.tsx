@@ -234,7 +234,10 @@ function JoinButton({
   return (
     <>
       <div className="flex h-9 items-stretch overflow-hidden rounded-full bg-foreground text-sm font-medium text-background">
-        <a href="#" className="flex items-center pr-3 pl-4 transition-colors hover:bg-background/[0.1]">
+        <a
+          href="#"
+          className="flex items-center pr-3 pl-4 transition-colors hover:bg-background/[0.1]"
+        >
           Únete
         </a>
         <span className="my-2 w-px bg-background/20" aria-hidden />
@@ -272,7 +275,9 @@ function DropdownLinks({ links, onNavigate }: { links: NavLink[]; onNavigate: ()
           >
             <span className="block text-sm text-foreground">{link.label}</span>
             {link.description ? (
-              <span className="mt-0.5 block text-[13px] text-foreground/50">{link.description}</span>
+              <span className="mt-0.5 block text-[13px] text-foreground/50">
+                {link.description}
+              </span>
             ) : null}
           </a>
         </li>

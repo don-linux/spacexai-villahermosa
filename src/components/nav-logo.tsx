@@ -107,7 +107,9 @@ export function NavLogo() {
         aria-hidden
       >
         <span className="h-4 w-px bg-foreground/25" />
-        <span className="text-[15px] font-medium tracking-tight text-foreground/90">Villahermosa</span>
+        <span className="text-[15px] font-medium tracking-tight text-foreground/90">
+          Villahermosa
+        </span>
       </span>
     </a>
   );
