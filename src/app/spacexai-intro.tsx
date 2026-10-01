@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Alignment, EventType, Fit, Layout, useRive } from "@rive-app/react-canvas";
+import { Alignment, Fit, Layout, useRive } from "@rive-app/react-canvas";
 
 const RIVE_SRC = "/brand/spacexai/spacexai-dark.riv";
 const RIVE_ARTBOARD = "SPACE X WEB";
@@ -9,13 +9,17 @@ const RIVE_STATE_MACHINE = "SPACE X WEB";
 
 /** A short beat of dark before the Rive logo starts, so the write-on is not lost to the page load. */
 const RIVE_HOLD_MS = 350;
-/** How long the finished Rive mark holds still before handing over to the static wordmark. */
-const RIVE_LINGER_MS = 400;
-/** Backstop in case the state machine loops instead of settling. */
-const RIVE_MAX_MS = 2800;
-const RIVE_LOAD_TIMEOUT_MS = 1500;
-/** Must match the `.intro-overlay` opacity transition. */
-const FADE_MS = 280;
+/**
+ * The state machine settles on the drawn mark after ~1.5s but never fires Pause/Stop,
+ * so the hand-off is timed from load.
+ */
+const RIVE_PLAY_MS = 1500;
+/** How long the finished Rive mark holds still before the full wordmark fades in. */
+const RIVE_LINGER_MS = 300;
+/** The WASM runtime comes from a CDN; give slow networks a chance before skipping the intro. */
+const RIVE_LOAD_TIMEOUT_MS = 4000;
+/** Must match the `.intro-rive` opacity transition. */
+const CROSSFADE_MS = 700;
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
@@ -38,6 +42,7 @@ type Phase = "intro" | "leaving" | "done";
 export function SpaceXAIIntro() {
   const reduceMotion = usePrefersReducedMotion();
   const [phase, setPhase] = useState<Phase>("intro");
+  const [isArmed, setIsArmed] = useState(false);
   const hasFinished = useRef(false);
 
   const finish = useCallback(() => {
@@ -47,16 +52,21 @@ export function SpaceXAIIntro() {
   }, []);
 
   useEffect(() => {
+    const timer = window.setTimeout(() => setIsArmed(true), RIVE_HOLD_MS);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     if (phase !== "leaving") return;
-    const timer = window.setTimeout(() => setPhase("done"), FADE_MS);
+    const timer = window.setTimeout(() => setPhase("done"), CROSSFADE_MS);
     return () => window.clearTimeout(timer);
   }, [phase]);
 
-  const showIntro = !reduceMotion && phase !== "done";
+  const showRive = !reduceMotion && isArmed && phase !== "done";
   const showWordmark = reduceMotion || phase !== "intro";
 
   return (
-    <>
+    <div className="spacexai-stage">
       {showWordmark ? (
         <img
           className="spacexai-wordmark"
@@ -66,30 +76,12 @@ export function SpaceXAIIntro() {
           height={158}
         />
       ) : null}
-      {showIntro ? <IntroOverlay isLeaving={phase === "leaving"} onDone={finish} /> : null}
-    </>
-  );
-}
-
-function IntroOverlay({ isLeaving, onDone }: { isLeaving: boolean; onDone: () => void }) {
-  const [isArmed, setIsArmed] = useState(false);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setIsArmed(true), RIVE_HOLD_MS);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  return (
-    <div
-      className={`intro-overlay${isLeaving ? " intro-overlay-leaving" : ""}`}
-      role="presentation"
-    >
-      <div className="intro-logo-wrap">{isArmed ? <IntroRive onDone={onDone} /> : null}</div>
+      {showRive ? <IntroRive isLeaving={phase === "leaving"} onDone={finish} /> : null}
     </div>
   );
 }
 
-function IntroRive({ onDone }: { onDone: () => void }) {
+function IntroRive({ isLeaving, onDone }: { isLeaving: boolean; onDone: () => void }) {
   const { rive, RiveComponent } = useRive({
     src: RIVE_SRC,
     artboard: RIVE_ARTBOARD,
@@ -100,34 +92,19 @@ function IntroRive({ onDone }: { onDone: () => void }) {
   });
 
   useEffect(() => {
-    const timer = window.setTimeout(onDone, RIVE_MAX_MS);
-    return () => window.clearTimeout(timer);
-  }, [onDone]);
-
-  useEffect(() => {
-    if (rive) return;
+    if (rive) {
+      const timer = window.setTimeout(onDone, RIVE_PLAY_MS + RIVE_LINGER_MS);
+      return () => window.clearTimeout(timer);
+    }
     const timer = window.setTimeout(onDone, RIVE_LOAD_TIMEOUT_MS);
     return () => window.clearTimeout(timer);
   }, [rive, onDone]);
 
-  useEffect(() => {
-    if (!rive) return;
-
-    let lingerTimer = 0;
-    const handleSettled = () => {
-      window.clearTimeout(lingerTimer);
-      lingerTimer = window.setTimeout(onDone, RIVE_LINGER_MS);
-    };
-
-    rive.on(EventType.Pause, handleSettled);
-    rive.on(EventType.Stop, handleSettled);
-
-    return () => {
-      window.clearTimeout(lingerTimer);
-      rive.off(EventType.Pause, handleSettled);
-      rive.off(EventType.Stop, handleSettled);
-    };
-  }, [rive, onDone]);
-
-  return <RiveComponent className="intro-rive" aria-label="SpaceXAI" role="img" />;
+  return (
+    <RiveComponent
+      className={`intro-rive${isLeaving ? " intro-rive-leaving" : ""}`}
+      aria-label="SpaceXAI"
+      role="img"
+    />
+  );
 }
