@@ -23,10 +23,12 @@ export function IntroGate({ children }: { children: ReactNode }) {
 
   const revealed = reduceMotion || stage !== "intro";
   const showIntro = !reduceMotion && stage !== "done";
+  const dataIntro =
+    reduceMotion || stage === "done" ? "done" : stage === "intro" ? "pending" : "revealing";
 
   return (
     <RevealedContext value={revealed}>
-      <div className="flex min-h-dvh flex-1 flex-col" data-intro={revealed ? "done" : "pending"}>
+      <div className="flex min-h-dvh flex-1 flex-col" data-intro={dataIntro}>
         {children}
       </div>
       {showIntro ? <SpaceXAIIntro onReveal={reveal} onDone={finish} /> : null}

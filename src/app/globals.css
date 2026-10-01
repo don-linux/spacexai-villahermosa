@@ -84,8 +84,14 @@ html:has([data-intro="pending"]) {
     opacity: 0;
   }
 
+  [data-intro="revealing"] .reveal,
   [data-intro="done"] .reveal {
     animation: revealIn 900ms cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms) both;
+  }
+
+  /* The intro's wordmark glides onto this one; it takes over once the overlay unmounts. */
+  [data-intro="revealing"] [data-intro-target] {
+    visibility: hidden;
   }
 
   .nav-logo-label {
@@ -243,6 +249,7 @@ html:has([data-intro="pending"]) {
   .spacexai-wordmark,
   .dropdown-panel,
   .mobile-menu,
+  [data-intro="revealing"] .reveal,
   [data-intro="done"] .reveal {
     animation: none;
   }
