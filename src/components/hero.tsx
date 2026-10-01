@@ -28,7 +28,8 @@ export function Hero() {
         className="reveal hero-title mt-8 max-w-5xl font-normal tracking-[-0.035em] text-balance text-white"
         style={revealDelay(220)}
       >
-        La comunidad de <SpaceXAIWordmark className="hero-wordmark" /> en Villahermosa{" "}
+        La comunidad de <SpaceXAIWordmark className="hero-wordmark" data-intro-target /> en
+        Villahermosa{" "}
         <span className="block">
           está <span className="hero-underline">aquí</span>.
         </span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { Alignment, Fit, Layout, useRive } from "@rive-app/react-canvas";
 import { RIVE_ARTBOARD, RIVE_SRC, RIVE_STATE_MACHINE, useRiveSettled } from "@/lib/spacexai-rive";
 
@@ -14,14 +15,19 @@ const RIVE_LOAD_TIMEOUT_MS = 4000;
 const CROSSFADE_MS = 700;
 /** How long the static wordmark stays on screen before the landing is revealed. */
 const WORDMARK_HOLD_MS = 650;
-/** Must match the `.intro-screen` opacity transition. */
-const EXIT_MS = 700;
+/**
+ * Long enough for the `.spacexai-stage` glide and for the hero headline underneath to finish
+ * its reveal, so unmounting the overlay is invisible.
+ */
+const EXIT_MS = 1200;
 
 type Phase = "intro" | "leaving" | "wordmark" | "exiting";
 
 export function SpaceXAIIntro({ onReveal, onDone }: { onReveal: () => void; onDone: () => void }) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [isArmed, setIsArmed] = useState(false);
+  const [morph, setMorph] = useState<CSSProperties | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const hasFinished = useRef(false);
 
   const finish = useCallback(() => {
@@ -43,6 +49,7 @@ export function SpaceXAIIntro({ onReveal, onDone }: { onReveal: () => void; onDo
     }
     if (phase === "wordmark") {
       const timer = window.setTimeout(() => {
+        setMorph(morphOnto(stageRef.current, document.querySelector("[data-intro-target]")));
         setPhase("exiting");
         onReveal();
       }, WORDMARK_HOLD_MS);
@@ -54,10 +61,15 @@ export function SpaceXAIIntro({ onReveal, onDone }: { onReveal: () => void; onDo
 
   const showRive = isArmed && (phase === "intro" || phase === "leaving");
   const showWordmark = phase !== "intro";
+  const isExiting = phase === "exiting";
 
   return (
-    <div className={`intro-screen${phase === "exiting" ? " intro-screen-exit" : ""}`} aria-hidden>
-      <div className="spacexai-stage">
+    <div className={`intro-screen${isExiting ? " intro-screen-exit" : ""}`} aria-hidden>
+      <div
+        ref={stageRef}
+        className={`spacexai-stage${isExiting && !morph ? " spacexai-stage-fade" : ""}`}
+        style={morph ?? undefined}
+      >
         {showWordmark ? (
           <img
             className="spacexai-wordmark"
@@ -75,6 +87,18 @@ export function SpaceXAIIntro({ onReveal, onDone }: { onReveal: () => void; onDo
       ) : null}
     </div>
   );
+}
+
+/** Glides the intro wordmark onto the hero's inline wordmark, which sits at the same aspect ratio. */
+function morphOnto(from: Element | null, to: Element | null): CSSProperties | null {
+  if (!from || !to) return null;
+  const start = from.getBoundingClientRect();
+  const end = to.getBoundingClientRect();
+  if (!start.width || !end.width) return null;
+  return {
+    transformOrigin: "0 0",
+    transform: `translate(${end.left - start.left}px, ${end.top - start.top}px) scale(${end.width / start.width})`,
+  };
 }
 
 function IntroRive({ isLeaving, onDone }: { isLeaving: boolean; onDone: () => void }) {

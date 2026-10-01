@@ -109,7 +109,8 @@ export function SiteHeader() {
   };
   const toggle = (label: string) => setOpenMenu((current) => (current === label ? null : label));
 
-  // `backdrop-filter` would become the containing block of the fixed mobile panel.
+  // `backdrop-filter` (like the reveal's transform) would become the containing block of the
+  // fixed mobile panel, so neither may sit on the header itself while the menu is open.
   const surface = mobileOpen
     ? "border-white/[0.06] bg-background"
     : scrolled
@@ -119,9 +120,9 @@ export function SiteHeader() {
   return (
     <header
       ref={headerRef}
-      className={`reveal sticky top-0 z-50 border-b transition-colors duration-300 ${surface}`}
+      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${surface}`}
     >
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-6 px-5 md:px-6">
+      <div className="reveal mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-6 px-5 md:px-6">
         <div className="flex items-center gap-8">
           <NavLogo />
           <nav aria-label="Principal" className="hidden md:block">
