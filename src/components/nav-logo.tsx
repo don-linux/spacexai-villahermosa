@@ -94,8 +94,8 @@ export function NavLogo() {
         className={`nav-logo-label flex items-center gap-3${showLabel ? " nav-logo-label-in" : ""}`}
         aria-hidden
       >
-        <span className="h-4 w-px bg-white/25" />
-        <span className="text-[15px] font-medium tracking-tight text-white/90">Villahermosa</span>
+        <span className="h-4 w-px bg-foreground/25" />
+        <span className="text-[15px] font-medium tracking-tight text-foreground/90">Villahermosa</span>
       </span>
     </a>
   );

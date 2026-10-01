@@ -1,8 +1,29 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Dark is the default; `.light` is set on <html> by the theme script. */
 :root {
   --background: #0a0a0a;
   --foreground: #ffffff;
+  --surface: rgb(17 17 17 / 0.96);
+  --surface-shadow: rgb(0 0 0 / 0.7);
+  --pill-solid-hover: #e4e4e4;
+  color-scheme: dark;
+}
+
+:root.light {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --surface: rgb(255 255 255 / 0.96);
+  --surface-shadow: rgb(0 0 0 / 0.12);
+  --pill-solid-hover: #2a2a2a;
+  color-scheme: light;
+}
+
+:root.light .theme-dark-only,
+:root:not(.light) .theme-light-only {
+  display: none;
 }
 
 @theme inline {
@@ -117,13 +138,13 @@ html:has([data-intro="pending"]) {
     border-radius: 9999px;
     padding: 0.375rem 0.75rem;
     font-size: 14px;
-    color: rgb(255 255 255 / 0.7);
+    color: color-mix(in oklab, var(--foreground) 70%, transparent);
     transition: color 150ms ease;
   }
 
   .nav-link:hover,
   .nav-link[aria-expanded="true"] {
-    color: #fff;
+    color: var(--foreground);
   }
 
   .pill {
@@ -138,22 +159,22 @@ html:has([data-intro="pending"]) {
     transition: background-color 150ms ease;
   }
 
-  .pill-dark {
-    background: rgb(255 255 255 / 0.08);
-    color: #fff;
+  .pill-soft {
+    background: color-mix(in oklab, var(--foreground) 8%, transparent);
+    color: var(--foreground);
   }
 
-  .pill-dark:hover {
-    background: rgb(255 255 255 / 0.14);
+  .pill-soft:hover {
+    background: color-mix(in oklab, var(--foreground) 14%, transparent);
   }
 
-  .pill-light {
-    background: #fff;
-    color: #000;
+  .pill-solid {
+    background: var(--foreground);
+    color: var(--background);
   }
 
-  .pill-light:hover {
-    background: #e4e4e4;
+  .pill-solid:hover {
+    background: var(--pill-solid-hover);
   }
 
   .dropdown {
@@ -166,10 +187,10 @@ html:has([data-intro="pending"]) {
   .dropdown-panel {
     width: 18rem;
     padding: 0.375rem;
-    border: 1px solid rgb(255 255 255 / 0.08);
+    border: 1px solid color-mix(in oklab, var(--foreground) 8%, transparent);
     border-radius: 1rem;
-    background: rgb(17 17 17 / 0.96);
-    box-shadow: 0 20px 48px -16px rgb(0 0 0 / 0.7);
+    background: var(--surface);
+    box-shadow: 0 20px 48px -16px var(--surface-shadow);
     backdrop-filter: blur(16px);
     text-align: left;
     animation: dropdownIn 160ms ease-out both;
@@ -185,7 +206,7 @@ html:has([data-intro="pending"]) {
     height: 70%;
     background: radial-gradient(
       ellipse 45% 55% at 50% 0%,
-      rgb(255 255 255 / 0.07),
+      color-mix(in oklab, var(--foreground) 7%, transparent),
       transparent 70%
     );
     pointer-events: none;
@@ -209,7 +230,7 @@ html:has([data-intro="pending"]) {
 
   .hero-underline {
     text-decoration-line: underline;
-    text-decoration-color: rgb(255 255 255 / 0.35);
+    text-decoration-color: color-mix(in oklab, var(--foreground) 35%, transparent);
     text-decoration-thickness: 0.045em;
     text-underline-offset: 0.16em;
   }

@@ -112,9 +112,9 @@ export function SiteHeader() {
   // `backdrop-filter` (like the reveal's transform) would become the containing block of the
   // fixed mobile panel, so neither may sit on the header itself while the menu is open.
   const surface = mobileOpen
-    ? "border-white/[0.06] bg-background"
+    ? "border-foreground/[0.06] bg-background"
     : scrolled
-      ? "border-white/[0.06] bg-background/75 backdrop-blur-xl"
+      ? "border-foreground/[0.06] bg-background/75 backdrop-blur-xl"
       : "border-transparent bg-transparent";
 
   return (
@@ -156,7 +156,7 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <a href="#" className="pill pill-dark hidden md:inline-flex">
+          <a href="#" className="pill pill-soft hidden md:inline-flex">
             Contacto
           </a>
           <div
@@ -170,7 +170,7 @@ export function SiteHeader() {
               onNavigate={() => setOpenMenu(null)}
             />
           </div>
-          <a href="#" className="pill pill-light md:hidden">
+          <a href="#" className="pill pill-solid md:hidden">
             Únete
           </a>
           <MobileMenuButton isOpen={mobileOpen} onToggle={() => setMobileOpen((open) => !open)} />
@@ -233,14 +233,14 @@ function JoinButton({
 
   return (
     <>
-      <div className="flex h-9 items-stretch overflow-hidden rounded-full bg-white text-sm font-medium text-black">
-        <a href="#" className="flex items-center pr-3 pl-4 transition-colors hover:bg-black/[0.06]">
+      <div className="flex h-9 items-stretch overflow-hidden rounded-full bg-foreground text-sm font-medium text-background">
+        <a href="#" className="flex items-center pr-3 pl-4 transition-colors hover:bg-background/[0.1]">
           Únete
         </a>
-        <span className="my-2 w-px bg-black/15" aria-hidden />
+        <span className="my-2 w-px bg-background/20" aria-hidden />
         <button
           type="button"
-          className="flex items-center px-2.5 transition-colors hover:bg-black/[0.06]"
+          className="flex items-center px-2.5 transition-colors hover:bg-background/[0.1]"
           aria-label="Más formas de unirte"
           aria-expanded={isOpen}
           aria-controls={panelId}
@@ -268,11 +268,11 @@ function DropdownLinks({ links, onNavigate }: { links: NavLink[]; onNavigate: ()
           <a
             href={link.href}
             onClick={onNavigate}
-            className="block rounded-xl px-3 py-2.5 transition-colors hover:bg-white/[0.06]"
+            className="block rounded-xl px-3 py-2.5 transition-colors hover:bg-foreground/[0.06]"
           >
-            <span className="block text-sm text-white">{link.label}</span>
+            <span className="block text-sm text-foreground">{link.label}</span>
             {link.description ? (
-              <span className="mt-0.5 block text-[13px] text-white/50">{link.description}</span>
+              <span className="mt-0.5 block text-[13px] text-foreground/50">{link.description}</span>
             ) : null}
           </a>
         </li>
@@ -285,7 +285,7 @@ function MobileMenuButton({ isOpen, onToggle }: { isOpen: boolean; onToggle: () 
   return (
     <button
       type="button"
-      className="relative flex size-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/[0.08] md:hidden"
+      className="relative flex size-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/[0.08] md:hidden"
       aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
       aria-expanded={isOpen}
       aria-controls="mobile-menu"
@@ -316,7 +316,7 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
         {NAV_ITEMS.map((item) =>
           "items" in item ? (
             <li key={item.label}>
-              <p className="px-1 text-xs font-medium tracking-wide text-white/40 uppercase">
+              <p className="px-1 text-xs font-medium tracking-wide text-foreground/40 uppercase">
                 {item.label}
               </p>
               <ul className="mt-2 flex flex-col">
@@ -325,7 +325,7 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
                     <a
                       href={link.href}
                       onClick={onNavigate}
-                      className="block rounded-lg px-1 py-2 text-lg text-white/90 hover:text-white"
+                      className="block rounded-lg px-1 py-2 text-lg text-foreground/90 hover:text-foreground"
                     >
                       {link.label}
                     </a>
@@ -338,7 +338,7 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
               <a
                 href={item.href}
                 onClick={onNavigate}
-                className="block rounded-lg px-1 py-1 text-lg text-white/90 hover:text-white"
+                className="block rounded-lg px-1 py-1 text-lg text-foreground/90 hover:text-foreground"
               >
                 {item.label}
               </a>
@@ -347,10 +347,10 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
         )}
       </ul>
       <div className="mt-10 flex flex-col gap-3">
-        <a href="#" onClick={onNavigate} className="pill pill-dark h-11 justify-center">
+        <a href="#" onClick={onNavigate} className="pill pill-soft h-11 justify-center">
           Contacto
         </a>
-        <a href="#" onClick={onNavigate} className="pill pill-light h-11 justify-center">
+        <a href="#" onClick={onNavigate} className="pill pill-solid h-11 justify-center">
           Únete a la comunidad
         </a>
       </div>
