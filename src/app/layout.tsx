@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
+import { ThemeScript } from "@/components/theme-script";
 import "./globals.css";
 
 const universalSans = localFont({
@@ -38,8 +39,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${universalSans.variable} ${universalDisplay.variable} h-full antialiased`}
+      className={`${universalSans.variable} ${universalDisplay.variable} dark h-full antialiased`}
+      style={{ colorScheme: "dark" }}
+      suppressHydrationWarning
     >
+      <head>
+        <ThemeScript />
+      </head>
       <body className="min-h-full flex flex-col">
         <noscript>
           <style>{`.intro-screen{display:none}[data-intro] .reveal{opacity:1;animation:none}`}</style>
