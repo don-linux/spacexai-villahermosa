@@ -34,7 +34,7 @@ const NAV_ITEMS: NavItem[] = [
       { label: "Herramientas", description: "Lo que usa la comunidad", href: "#" },
     ],
   },
-  { label: "Proyectos", href: "#" },
+  { label: "Créditos", href: "/creditos" },
   { label: "Noticias", href: "#" },
 ];
 
