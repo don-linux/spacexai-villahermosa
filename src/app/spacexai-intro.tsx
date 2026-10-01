@@ -1,51 +1,33 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Alignment, EventType, Fit, Layout, useRive } from "@rive-app/react-canvas";
-import type { Event as RiveEvent } from "@rive-app/react-canvas";
-
-const RIVE_SRC = "/brand/spacexai/spacexai-dark.riv";
-const RIVE_ARTBOARD = "SPACE X WEB";
-const RIVE_STATE_MACHINE = "SPACE X WEB";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import { Alignment, Fit, Layout, useRive } from "@rive-app/react-canvas";
+import { RIVE_ARTBOARD, RIVE_SRC, RIVE_STATE_MACHINE, useRiveSettled } from "@/lib/spacexai-rive";
 
 /** A short beat of dark before the Rive logo starts, so the write-on is not lost to the page load. */
 const RIVE_HOLD_MS = 350;
-/**
- * The state machine settles on the drawn mark after ~1.5s of animation time but never
- * fires Pause/Stop, so the hand-off is driven by the time it has actually advanced.
- */
-const RIVE_PLAY_S = 1.5;
 /** How long the finished Rive mark holds still before the full wordmark fades in. */
 const RIVE_LINGER_MS = 300;
-/** Backstop in case frames stop advancing (e.g. a background tab). */
-const RIVE_MAX_MS = 5000;
 /** The WASM runtime comes from a CDN; give slow networks a chance before skipping the intro. */
 const RIVE_LOAD_TIMEOUT_MS = 4000;
 /** Must match the `.intro-rive` opacity transition. */
 const CROSSFADE_MS = 700;
+/** How long the static wordmark stays on screen before the landing is revealed. */
+const WORDMARK_HOLD_MS = 650;
+/**
+ * Long enough for the `.spacexai-stage` glide and for the hero headline underneath to finish
+ * its reveal, so unmounting the overlay is invisible.
+ */
+const EXIT_MS = 1200;
 
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+type Phase = "intro" | "leaving" | "wordmark" | "exiting";
 
-function subscribeReducedMotion(onChange: () => void) {
-  const query = window.matchMedia(REDUCED_MOTION_QUERY);
-  query.addEventListener("change", onChange);
-  return () => query.removeEventListener("change", onChange);
-}
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeReducedMotion,
-    () => window.matchMedia(REDUCED_MOTION_QUERY).matches,
-    () => false,
-  );
-}
-
-type Phase = "intro" | "leaving" | "done";
-
-export function SpaceXAIIntro() {
-  const reduceMotion = usePrefersReducedMotion();
+export function SpaceXAIIntro({ onReveal, onDone }: { onReveal: () => void; onDone: () => void }) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [isArmed, setIsArmed] = useState(false);
+  const [morph, setMorph] = useState<CSSProperties | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const hasFinished = useRef(false);
 
   const finish = useCallback(() => {
@@ -60,34 +42,63 @@ export function SpaceXAIIntro() {
   }, []);
 
   useEffect(() => {
-    if (phase !== "leaving") return;
-    const timer = window.setTimeout(() => setPhase("done"), CROSSFADE_MS);
+    if (phase === "intro") return;
+    if (phase === "leaving") {
+      const timer = window.setTimeout(() => setPhase("wordmark"), CROSSFADE_MS);
+      return () => window.clearTimeout(timer);
+    }
+    if (phase === "wordmark") {
+      const timer = window.setTimeout(() => {
+        setMorph(morphOnto(stageRef.current, document.querySelector("[data-intro-target]")));
+        setPhase("exiting");
+        onReveal();
+      }, WORDMARK_HOLD_MS);
+      return () => window.clearTimeout(timer);
+    }
+    const timer = window.setTimeout(onDone, EXIT_MS);
     return () => window.clearTimeout(timer);
-  }, [phase]);
+  }, [phase, onReveal, onDone]);
 
-  const showRive = !reduceMotion && isArmed && phase !== "done";
-  const showWordmark = reduceMotion || phase !== "intro";
+  const showRive = isArmed && (phase === "intro" || phase === "leaving");
+  const showWordmark = phase !== "intro";
+  const isExiting = phase === "exiting";
 
   return (
-    <>
-      <div className="spacexai-stage">
+    <div className={`intro-screen${isExiting ? " intro-screen-exit" : ""}`} aria-hidden>
+      <div
+        ref={stageRef}
+        className={`spacexai-stage${isExiting && !morph ? " spacexai-stage-fade" : ""}`}
+        style={morph ?? undefined}
+      >
         {showWordmark ? (
           <img
             className="spacexai-wordmark"
             src="/brand/spacexai/wordmark-white.svg"
-            alt="SpaceXAI"
+            alt=""
             width={1294}
             height={158}
           />
         ) : null}
       </div>
       {showRive ? (
-        <div className="intro-overlay" role="presentation">
+        <div className="intro-rive-layer">
           <IntroRive isLeaving={phase === "leaving"} onDone={finish} />
         </div>
       ) : null}
-    </>
+    </div>
   );
+}
+
+/** Glides the intro wordmark onto the hero's inline wordmark, which sits at the same aspect ratio. */
+function morphOnto(from: Element | null, to: Element | null): CSSProperties | null {
+  if (!from || !to) return null;
+  const start = from.getBoundingClientRect();
+  const end = to.getBoundingClientRect();
+  if (!start.width || !end.width) return null;
+  return {
+    transformOrigin: "0 0",
+    transform: `translate(${end.left - start.left}px, ${end.top - start.top}px) scale(${end.width / start.width})`,
+  };
 }
 
 function IntroRive({ isLeaving, onDone }: { isLeaving: boolean; onDone: () => void }) {
@@ -100,39 +111,19 @@ function IntroRive({ isLeaving, onDone }: { isLeaving: boolean; onDone: () => vo
     onLoadError: onDone,
   });
 
+  const lingerTimer = useRef(0);
+  const settle = useCallback(() => {
+    lingerTimer.current = window.setTimeout(onDone, RIVE_LINGER_MS);
+  }, [onDone]);
+  useEffect(() => () => window.clearTimeout(lingerTimer.current), []);
+
   useEffect(() => {
     if (rive) return;
     const timer = window.setTimeout(onDone, RIVE_LOAD_TIMEOUT_MS);
     return () => window.clearTimeout(timer);
   }, [rive, onDone]);
 
-  useEffect(() => {
-    if (!rive) return;
+  useRiveSettled(rive, settle);
 
-    let played = 0;
-    let lingerTimer = 0;
-    const maxTimer = window.setTimeout(onDone, RIVE_MAX_MS);
-    const handleAdvance = (event: RiveEvent) => {
-      played += typeof event.data === "number" ? event.data : 0;
-      if (played < RIVE_PLAY_S) return;
-      rive.off(EventType.Advance, handleAdvance);
-      lingerTimer = window.setTimeout(onDone, RIVE_LINGER_MS);
-    };
-
-    rive.on(EventType.Advance, handleAdvance);
-
-    return () => {
-      window.clearTimeout(maxTimer);
-      window.clearTimeout(lingerTimer);
-      rive.off(EventType.Advance, handleAdvance);
-    };
-  }, [rive, onDone]);
-
-  return (
-    <RiveComponent
-      className={`intro-rive${isLeaving ? " intro-rive-leaving" : ""}`}
-      aria-label="SpaceXAI"
-      role="img"
-    />
-  );
+  return <RiveComponent className={`intro-rive${isLeaving ? " intro-rive-leaving" : ""}`} />;
 }
