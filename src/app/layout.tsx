@@ -1,10 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geist = Geist({
-  variable: "--font-geist",
-  subsets: ["latin"],
+const universalSans = localFont({
+  src: [
+    {
+      path: "./fonts/UniversalSansGrokTest-Text-400-Trial.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/UniversalSansGrokTest-Text-550-Trial.ttf",
+      weight: "550",
+      style: "normal",
+    },
+  ],
+  variable: "--font-universal",
+});
+
+const universalDisplay = localFont({
+  src: "./fonts/UniversalSansGrokTest-Display-400-Trial.ttf",
+  weight: "400",
+  variable: "--font-display",
 });
 
 export const metadata: Metadata = {
@@ -18,7 +35,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${geist.variable} h-full antialiased`}>
+    <html
+      lang="es"
+      className={`${universalSans.variable} ${universalDisplay.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">
         <noscript>
           <style>{`.intro-screen{display:none}[data-intro] .reveal{opacity:1;animation:none}`}</style>
