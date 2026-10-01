@@ -1,0 +1,348 @@
+/* Ported from grok-bot-meetup's MeetupWall.vue; the layout numbers are the original's. */
+
+.wall {
+  --ease-swap: 1s cubic-bezier(0.22, 1, 0.36, 1);
+  --muted: color-mix(in oklab, var(--foreground) 50%, transparent);
+  position: relative;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  color: var(--foreground);
+  overflow: hidden;
+}
+
+.textLink {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+}
+
+.textLink:hover,
+.textLink:focus-visible {
+  color: var(--foreground);
+}
+
+.back {
+  position: absolute;
+  top: 1.6rem;
+  left: 1.75rem;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-out;
+}
+
+.claimMode .back {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.35s ease-out 0.25s;
+}
+
+.corner {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cornerLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  padding-inline: 0.35rem;
+  border-radius: 9999px;
+  color: var(--muted);
+  transition:
+    color 150ms ease,
+    opacity 150ms ease;
+}
+
+.cornerLink:hover,
+.cornerLink:focus-visible {
+  color: var(--foreground);
+}
+
+.luma {
+  height: 1.25rem;
+  width: auto;
+  opacity: 0.55;
+  transition: opacity 150ms ease;
+}
+
+.cornerLink:hover .luma,
+.cornerLink:focus-visible .luma {
+  opacity: 1;
+}
+
+.home {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.top {
+  --copy-w: 20rem;
+  --qr-w: min(58vh, 34vw);
+  --duo-gap: clamp(1.5rem, 4vw, 4rem);
+  --avatar-w: min(68vh, 46rem, 48vw);
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 5vw 0.5rem;
+}
+
+.duo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--duo-gap);
+  min-width: 0;
+}
+
+.anchor {
+  flex: 0 0 auto;
+  width: var(--copy-w);
+  align-self: center;
+  overflow: visible;
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: var(--copy-w);
+  transform: translate(0, 0);
+  transition:
+    transform var(--ease-swap),
+    width var(--ease-swap);
+}
+
+/* The duo stays left-aligned; it is recentred as one block over the QR. */
+.claimMode .copy {
+  align-items: center;
+  transform: translate(calc((var(--qr-w) - var(--copy-w)) / 2), calc(3rem - 37vh));
+}
+
+.wordmark {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.place {
+  margin: 0.7rem 0 0;
+  font-family: var(--font-display), var(--font-sans);
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.claimMode .place {
+  width: 100%;
+  text-align: center;
+}
+
+.claim {
+  display: inline-block;
+  margin: 0.85rem 0 0;
+  font-size: 0.92rem;
+  transition: opacity 0.35s ease-out;
+}
+
+.claimMode .claim {
+  opacity: 0;
+  pointer-events: none;
+  margin-top: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.reveal {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  z-index: 1;
+  width: var(--qr-w);
+  opacity: 0;
+  transform: translate(22vw, -30%) scale(0.4);
+  transform-origin: center center;
+  pointer-events: none;
+  transition:
+    transform var(--ease-swap),
+    opacity 0.35s ease-out;
+}
+
+.claimMode .reveal {
+  opacity: 1;
+  transform: translate(0, calc(3rem - 37vh + 7.2rem)) scale(1);
+  pointer-events: auto;
+}
+
+/* Dark modules on a light card in both themes: many cameras fail on an inverted code. */
+.qr {
+  padding: 4%;
+  border-radius: 1.5rem;
+  background: #ffffff;
+}
+
+.qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.noEvent {
+  margin: 0;
+  padding-top: 1.5rem;
+  font-family: var(--font-display), var(--font-sans);
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.scene {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.avatar {
+  width: var(--avatar-w);
+  aspect-ratio: 1;
+  transform: translate(0, 0) scale(1);
+  transition: transform var(--ease-swap);
+  cursor: pointer;
+}
+
+.claimMode .avatar {
+  transform: translate(30vw, 14vh) scale(2.5);
+}
+
+.avatar svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.presented {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.4rem 1.5rem 2.2rem;
+}
+
+.presentedLabel {
+  margin: 0;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  color: color-mix(in oklab, var(--foreground) 55%, transparent);
+}
+
+.spacexai {
+  display: block;
+  width: clamp(9.5rem, 14vw, 12.5rem);
+  height: auto;
+}
+
+.themeToggle {
+  position: absolute;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 4;
+}
+
+@media (width < 64rem) {
+  .corner {
+    right: 1rem;
+  }
+
+  .top {
+    --avatar-w: min(72vw, 22rem);
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 3.4rem 1.4rem 0.4rem;
+  }
+
+  .duo {
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .anchor {
+    width: auto;
+  }
+
+  .copy,
+  .claimMode .copy {
+    transform: none;
+    width: min(100%, 18rem);
+    margin-inline: auto;
+  }
+
+  .reveal,
+  .claimMode .reveal {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: min(100%, 18rem);
+    margin-inline: auto;
+    transform: none;
+  }
+
+  .reveal {
+    height: 0;
+    opacity: 0;
+  }
+
+  .claimMode .reveal {
+    height: auto;
+    opacity: 1;
+  }
+
+  .noEvent {
+    padding-top: 0;
+  }
+
+  .claimMode .avatar {
+    transform: translate(8vw, 6vh) scale(1.45);
+  }
+
+  .themeToggle {
+    left: 0.75rem;
+    bottom: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .copy,
+  .avatar,
+  .back {
+    transition: none;
+  }
+}
