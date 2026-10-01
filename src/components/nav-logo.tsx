@@ -13,6 +13,7 @@ import {
   usePrefersReducedMotion,
   useRiveSettled,
 } from "@/lib/spacexai-rive";
+import { useResolvedTheme } from "@/lib/theme";
 
 /** Rendered height of the X mark in the navbar, in px. */
 const MARK_HEIGHT = 20;
@@ -42,6 +43,7 @@ type Mode = "waiting" | "playing" | "settled" | "static";
 export function NavLogo() {
   const revealed = useLandingRevealed();
   const reduceMotion = usePrefersReducedMotion();
+  const theme = useResolvedTheme();
   const [isArmed, setIsArmed] = useState(false);
   const [mode, setMode] = useState<Mode>("waiting");
   const [replays, setReplays] = useState(0);
@@ -56,7 +58,8 @@ export function NavLogo() {
   const handleSettled = useCallback(() => setMode("settled"), []);
   const handleFail = useCallback(() => setMode("static"), []);
 
-  const effectiveMode: Mode = reduceMotion ? "static" : mode;
+  // The Rive mark is white-only, so light mode keeps the static black symbol.
+  const effectiveMode: Mode = reduceMotion || theme === "light" ? "static" : mode;
   const showLabel = effectiveMode === "settled" || effectiveMode === "static";
 
   const replay = (event: PointerEvent) => {
@@ -74,13 +77,22 @@ export function NavLogo() {
     >
       <span className="relative block shrink-0" style={{ width: MARK_WIDTH, height: MARK_HEIGHT }}>
         {effectiveMode === "static" ? (
-          <img
-            src="/brand/spacexai/mark-white.svg"
-            alt=""
-            width={MARK_WIDTH}
-            height={MARK_HEIGHT}
-            className="block h-full w-full"
-          />
+          <>
+            <img
+              src="/brand/spacexai/mark-white.svg"
+              alt=""
+              width={MARK_WIDTH}
+              height={MARK_HEIGHT}
+              className="theme-dark-only block h-full w-full"
+            />
+            <img
+              src="/brand/spacexai/spacexai-symbol-black-transparent.svg"
+              alt=""
+              width={MARK_WIDTH}
+              height={MARK_HEIGHT}
+              className="theme-light-only block h-full w-full object-contain"
+            />
+          </>
         ) : isArmed ? (
           <NavRive
             replays={replays}

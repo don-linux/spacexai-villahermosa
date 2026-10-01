@@ -37,7 +37,15 @@ export function SpaceXAIIntro({ onReveal, onDone }: { onReveal: () => void; onDo
   }, []);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setIsArmed(true), RIVE_HOLD_MS);
+    const timer = window.setTimeout(() => {
+      // The Rive file is drawn for a dark background only, so light mode goes straight to the wordmark.
+      if (document.documentElement.classList.contains("light")) {
+        hasFinished.current = true;
+        setPhase("wordmark");
+      } else {
+        setIsArmed(true);
+      }
+    }, RIVE_HOLD_MS);
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -71,13 +79,22 @@ export function SpaceXAIIntro({ onReveal, onDone }: { onReveal: () => void; onDo
         style={morph ?? undefined}
       >
         {showWordmark ? (
-          <img
-            className="spacexai-wordmark"
-            src="/brand/spacexai/wordmark-white.svg"
-            alt=""
-            width={1294}
-            height={158}
-          />
+          <>
+            <img
+              className="spacexai-wordmark theme-dark-only"
+              src="/brand/spacexai/spacexai-wordmark-white-transparent.svg"
+              alt=""
+              width={1294}
+              height={158}
+            />
+            <img
+              className="spacexai-wordmark theme-light-only"
+              src="/brand/spacexai/spacexai-wordmark-black-transparent.svg"
+              alt=""
+              width={1294}
+              height={158}
+            />
+          </>
         ) : null}
       </div>
       {showRive ? (
