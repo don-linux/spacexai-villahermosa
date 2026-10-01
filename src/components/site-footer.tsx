@@ -5,7 +5,7 @@ type FooterGroup = { title: string; links: string[] };
 // Placeholder links until the real sections exist; each column stacks one or two groups.
 const FOOTER_COLUMNS: FooterGroup[][] = [
   [
-    { title: "Comunidad", links: ["Sobre nosotros", "Proyectos", "Código de conducta"] },
+    { title: "Comunidad", links: ["Sobre nosotros", "Créditos", "Código de conducta"] },
     { title: "Organizadores", links: ["Equipo", "Voluntariado", "Patrocinios"] },
   ],
   [
@@ -22,6 +22,9 @@ const FOOTER_COLUMNS: FooterGroup[][] = [
   ],
   [{ title: "Legal", links: ["Privacidad", "Términos de uso", "Contacto"] }],
 ];
+
+// The sections that already exist; every other link stays a placeholder.
+const FOOTER_HREFS: Record<string, string> = { Créditos: "/creditos" };
 
 export function SiteFooter() {
   return (
@@ -60,7 +63,7 @@ export function SiteFooter() {
                     {group.links.map((label) => (
                       <li key={label}>
                         <a
-                          href="#"
+                          href={FOOTER_HREFS[label] ?? "#"}
                           className="text-[13px] text-foreground/55 transition-colors hover:text-foreground"
                         >
                           {label}
