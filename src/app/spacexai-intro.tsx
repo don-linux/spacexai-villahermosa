@@ -69,18 +69,24 @@ export function SpaceXAIIntro() {
   const showWordmark = reduceMotion || phase !== "intro";
 
   return (
-    <div className="spacexai-stage">
-      {showWordmark ? (
-        <img
-          className="spacexai-wordmark"
-          src="/brand/spacexai/wordmark-white.svg"
-          alt="SpaceXAI"
-          width={1294}
-          height={158}
-        />
+    <>
+      <div className="spacexai-stage">
+        {showWordmark ? (
+          <img
+            className="spacexai-wordmark"
+            src="/brand/spacexai/wordmark-white.svg"
+            alt="SpaceXAI"
+            width={1294}
+            height={158}
+          />
+        ) : null}
+      </div>
+      {showRive ? (
+        <div className="intro-overlay" role="presentation">
+          <IntroRive isLeaving={phase === "leaving"} onDone={finish} />
+        </div>
       ) : null}
-      {showRive ? <IntroRive isLeaving={phase === "leaving"} onDone={finish} /> : null}
-    </div>
+    </>
   );
 }
 

@@ -17,7 +17,6 @@ body {
 }
 
 .spacexai-stage {
-  position: relative;
   width: clamp(240px, 54vw, 640px);
   aspect-ratio: 1294 / 158;
 }
@@ -38,18 +37,19 @@ body {
   }
 }
 
-/*
- * The Rive artboard (1389×257) ends on the X mark alone. These percentages of the
- * wordmark box (1294×158) place that mark exactly over the wordmark's X, so the
- * cross-fade only reveals "SPACE" around it.
- */
-.intro-rive {
-  position: absolute;
-  left: 63.11%;
-  top: -35.76%;
-  width: 108.95%;
-  height: 165.1%;
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
+}
+
+.intro-rive {
+  width: clamp(240px, 54vw, 640px);
+  aspect-ratio: 1389 / 257;
   transition: opacity 700ms ease;
 }
 
