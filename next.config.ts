@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Bottom-left belongs to the theme toggle on /creditos.
+  devIndicators: { position: "bottom-right" },
 };
 
 export default nextConfig;

@@ -282,13 +282,15 @@
   }
 
   .top {
-    --avatar-w: min(72vw, 22rem);
     flex-direction: column;
     justify-content: flex-start;
     padding: 3.4rem 1.4rem 0.4rem;
   }
 
   .duo {
+    flex: 1;
+    min-height: 0;
+    align-self: stretch;
     flex-direction: column;
     gap: 1.2rem;
   }
@@ -314,22 +316,45 @@
     transform: none;
   }
 
+  /* Rows animate from 0fr instead of jumping from height 0, so the bot below shrinks smoothly. */
   .reveal {
-    height: 0;
-    opacity: 0;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition:
+      grid-template-rows var(--ease-swap),
+      opacity 0.35s ease-out;
+  }
+
+  .reveal > * {
+    min-height: 0;
+    overflow: hidden;
   }
 
   .claimMode .reveal {
-    height: auto;
-    opacity: 1;
+    grid-template-rows: 1fr;
   }
 
   .noEvent {
     padding-top: 0;
   }
 
+  /* The bot takes whatever height the copy and the QR leave, so it never reaches the footer. */
+  .scene {
+    flex: 1 1 0;
+    min-height: 0;
+    align-self: stretch;
+    container-type: size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar {
+    width: min(72vw, 22rem, 100cqh);
+  }
+
   .claimMode .avatar {
-    transform: translate(8vw, 6vh) scale(1.45);
+    transform: none;
   }
 
   .themeToggle {
