@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const universalSans = localFont({
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <style>{`.intro-screen{display:none}[data-intro] .reveal{opacity:1;animation:none}`}</style>
         </noscript>
         {children}
+        <Analytics />
       </body>
     </html>
   );
