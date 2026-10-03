@@ -1,11 +1,18 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import type { PointerEvent } from "react";
-import { ChevronDownIcon } from "./icons";
+import type { ComponentType, PointerEvent, ReactNode, SVGProps } from "react";
+import { ChevronDownIcon, InstagramIcon, XIcon } from "./icons";
 import { NavLogo } from "./nav-logo";
 
-type NavLink = { label: string; description?: string; href: string };
+type MenuIcon = ComponentType<SVGProps<SVGSVGElement>>;
+type NavLink = {
+  label: string;
+  description?: string;
+  href: string;
+  icon?: MenuIcon;
+  external?: boolean;
+};
 type NavItem = { label: string; href: string } | { label: string; items: NavLink[] };
 
 // Placeholder navigation until the real sections exist.
@@ -38,10 +45,34 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Noticias", href: "#" },
 ];
 
+const CONTACT_LINKS: NavLink[] = [
+  {
+    label: "Instagram",
+    description: "@donlinux.dev",
+    href: "https://www.instagram.com/donlinux.dev/",
+    icon: InstagramIcon,
+    external: true,
+  },
+  {
+    label: "X",
+    description: "@donlinuxdev",
+    href: "https://x.com/donlinuxdev",
+    icon: XIcon,
+    external: true,
+  },
+];
+
 const JOIN_LINKS: NavLink[] = [
-  { label: "Discord", description: "Charla diaria", href: "#" },
-  { label: "WhatsApp", description: "Avisos de eventos", href: "#" },
-  { label: "Newsletter", description: "Un correo al mes", href: "#" },
+  {
+    label: "Comunidad global",
+    href: "https://luma.com/spacexai-community",
+    external: true,
+  },
+  {
+    label: "Villahermosa",
+    href: "https://luma.com/spacexai-villahermosa",
+    external: true,
+  },
 ];
 
 const MOBILE_BREAKPOINT_QUERY = "(min-width: 768px)";
@@ -156,9 +187,17 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <a href="#" className="pill pill-soft hidden md:inline-flex">
-            Contacto
-          </a>
+          <div
+            className="relative hidden md:block"
+            onPointerEnter={hoverOpen("contacto")}
+            onPointerLeave={hoverClose}
+          >
+            <ContactButton
+              isOpen={openMenu === "contacto"}
+              onToggle={() => toggle("contacto")}
+              onNavigate={() => setOpenMenu(null)}
+            />
+          </div>
           <div
             className="relative hidden md:block"
             onPointerEnter={hoverOpen("join")}
@@ -170,9 +209,15 @@ export function SiteHeader() {
               onNavigate={() => setOpenMenu(null)}
             />
           </div>
-          <a href="#" className="pill pill-solid md:hidden">
+          <button
+            type="button"
+            className="pill pill-solid md:hidden"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMobileOpen(true)}
+          >
             Únete
-          </a>
+          </button>
           <MobileMenuButton isOpen={mobileOpen} onToggle={() => setMobileOpen((open) => !open)} />
         </div>
       </div>
@@ -220,6 +265,37 @@ function NavDropdown({
   );
 }
 
+function ContactButton({
+  isOpen,
+  onToggle,
+  onNavigate,
+}: {
+  isOpen: boolean;
+  onToggle: () => void;
+  onNavigate: () => void;
+}) {
+  const panelId = useId();
+
+  return (
+    <>
+      <button
+        type="button"
+        className="pill pill-soft"
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+        onClick={onToggle}
+      >
+        Contacto
+      </button>
+      {isOpen ? (
+        <div id={panelId} className="dropdown right-0">
+          <DropdownLinks links={CONTACT_LINKS} onNavigate={onNavigate} />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
 function JoinButton({
   isOpen,
   onToggle,
@@ -234,12 +310,15 @@ function JoinButton({
   return (
     <>
       <div className="flex h-9 items-stretch overflow-hidden rounded-full bg-foreground text-sm font-medium text-background">
-        <a
-          href="#"
+        <button
+          type="button"
           className="flex items-center pr-3 pl-4 transition-colors hover:bg-background/[0.1]"
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          onClick={onToggle}
         >
           Únete
-        </a>
+        </button>
         <span className="my-2 w-px bg-background/20" aria-hidden />
         <button
           type="button"
@@ -256,33 +335,103 @@ function JoinButton({
       </div>
       {isOpen ? (
         <div id={panelId} className="dropdown right-0">
-          <DropdownLinks links={JOIN_LINKS} onNavigate={onNavigate} />
+          <DropdownLinks
+            links={JOIN_LINKS}
+            onNavigate={onNavigate}
+            leading={
+              <div className="px-3 pt-2.5 pb-1">
+                <LumaWordmark />
+              </div>
+            }
+          />
         </div>
       ) : null}
     </>
   );
 }
 
-function DropdownLinks({ links, onNavigate }: { links: NavLink[]; onNavigate: () => void }) {
+function LumaWordmark() {
   return (
-    <ul className="dropdown-panel">
+    <>
+      <img
+        src="/brand/luma/luma-logo-white.svg"
+        alt="Luma"
+        width={724}
+        height={264}
+        className="theme-dark-only block h-5 w-auto"
+      />
+      <img
+        src="/brand/luma/luma-logo-black.svg"
+        alt="Luma"
+        width={724}
+        height={264}
+        className="theme-light-only block h-5 w-auto"
+      />
+    </>
+  );
+}
+
+function DropdownLinks({
+  links,
+  onNavigate,
+  leading,
+}: {
+  links: NavLink[];
+  onNavigate: () => void;
+  leading?: ReactNode;
+}) {
+  const list = (
+    <ul className={leading ? undefined : "dropdown-panel"}>
       {links.map((link) => (
         <li key={link.label}>
-          <a
-            href={link.href}
-            onClick={onNavigate}
-            className="block rounded-xl px-3 py-2.5 transition-colors hover:bg-foreground/[0.06]"
-          >
-            <span className="block text-sm text-foreground">{link.label}</span>
-            {link.description ? (
-              <span className="mt-0.5 block text-[13px] text-foreground/50">
-                {link.description}
-              </span>
-            ) : null}
-          </a>
+          <MenuAnchor
+            link={link}
+            onNavigate={onNavigate}
+            className={`rounded-xl px-3 py-2.5 transition-colors hover:bg-foreground/[0.06] ${
+              link.icon ? "flex items-start gap-3" : "block"
+            }`}
+          />
         </li>
       ))}
     </ul>
+  );
+
+  if (!leading) return list;
+
+  return (
+    <div className="dropdown-panel">
+      {leading}
+      {list}
+    </div>
+  );
+}
+
+function MenuAnchor({
+  link,
+  onNavigate,
+  className,
+}: {
+  link: NavLink;
+  onNavigate: () => void;
+  className: string;
+}) {
+  const Icon = link.icon;
+
+  return (
+    <a
+      href={link.href}
+      onClick={onNavigate}
+      {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      className={className}
+    >
+      {Icon ? <Icon className="mt-0.5 size-4 shrink-0 text-foreground" /> : null}
+      <span className={Icon ? "min-w-0" : "contents"}>
+        <span className="block text-sm text-foreground">{link.label}</span>
+        {link.description ? (
+          <span className="mt-0.5 block text-[13px] text-foreground/50">{link.description}</span>
+        ) : null}
+      </span>
+    </a>
   );
 }
 
@@ -307,6 +456,38 @@ function MobileMenuButton({ isOpen, onToggle }: { isOpen: boolean; onToggle: () 
         }`}
       />
     </button>
+  );
+}
+
+function MobileLinkGroup({
+  label,
+  links,
+  onNavigate,
+  leading,
+}: {
+  label: string;
+  links: NavLink[];
+  onNavigate: () => void;
+  leading?: ReactNode;
+}) {
+  return (
+    <div>
+      <p className="px-1 text-xs font-medium tracking-wide text-foreground/40 uppercase">{label}</p>
+      {leading}
+      <ul className="mt-2 flex flex-col">
+        {links.map((link) => (
+          <li key={link.label}>
+            <MenuAnchor
+              link={link}
+              onNavigate={onNavigate}
+              className={`rounded-lg px-1 py-2.5 hover:bg-foreground/[0.06] ${
+                link.icon ? "flex items-start gap-3" : "block"
+              }`}
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -351,13 +532,18 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
           ),
         )}
       </ul>
-      <div className="mt-10 flex flex-col gap-3">
-        <a href="#" onClick={onNavigate} className="pill pill-soft h-11 justify-center">
-          Contacto
-        </a>
-        <a href="#" onClick={onNavigate} className="pill pill-solid h-11 justify-center">
-          Únete a la comunidad
-        </a>
+      <div className="mt-10 flex flex-col gap-8">
+        <MobileLinkGroup label="Contacto" links={CONTACT_LINKS} onNavigate={onNavigate} />
+        <MobileLinkGroup
+          label="Únete"
+          links={JOIN_LINKS}
+          onNavigate={onNavigate}
+          leading={
+            <div className="px-1 pt-3">
+              <LumaWordmark />
+            </div>
+          }
+        />
       </div>
     </nav>
   );
