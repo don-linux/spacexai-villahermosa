@@ -22,7 +22,7 @@ const NAV_ITEMS: NavItem[] = [
     items: [
       { label: "Sobre nosotros", description: "Quiénes somos y qué hacemos", href: "#" },
       { label: "Organizadores", description: "El equipo detrás de los eventos", href: "#" },
-      { label: "Código de conducta", description: "Cómo convivimos", href: "#" },
+      { label: "Código de conducta", description: "Cómo convivimos", href: "/codigo-de-conducta" },
     ],
   },
   {
