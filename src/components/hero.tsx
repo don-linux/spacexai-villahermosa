@@ -50,7 +50,7 @@ export function Hero() {
           Únete a la comunidad
           <ChevronRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
         </a>
-        <a href="#" className="pill pill-soft h-11 px-5">
+        <a href="/eventos/pasados" className="pill pill-soft h-11 px-5">
           Ver eventos
         </a>
       </div>

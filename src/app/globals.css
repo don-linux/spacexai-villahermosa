@@ -234,6 +234,36 @@ html:has([data-intro="pending"]) {
     text-decoration-thickness: 0.045em;
     text-underline-offset: 0.16em;
   }
+
+  .page-title {
+    font-family: var(--font-display), var(--font-sans);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .luma-ticket-poster {
+    transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .luma-ticket:hover .luma-ticket-poster,
+  .luma-ticket:focus-visible .luma-ticket-poster {
+    transform: translateY(-0.5rem);
+  }
+
+  .media-dialog {
+    width: min(72rem, calc(100vw - 1.5rem));
+    max-height: calc(100dvh - 1.5rem);
+    margin: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #fff;
+  }
+
+  .media-dialog::backdrop {
+    background: rgb(0 0 0 / 0.88);
+  }
 }
 
 @keyframes fadeIn {
@@ -278,7 +308,13 @@ html:has([data-intro="pending"]) {
     animation: none;
   }
 
-  .nav-logo-label {
+  .nav-logo-label,
+  .luma-ticket-poster {
     transition: none;
+  }
+
+  .luma-ticket:hover .luma-ticket-poster,
+  .luma-ticket:focus-visible .luma-ticket-poster {
+    transform: none;
   }
 }
