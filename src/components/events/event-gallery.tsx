@@ -75,9 +75,9 @@ export function EventGallery({ flyers, photos }: { flyers: EventFlyer[]; photos:
         </ul>
       </section>
 
-      <section className="mt-14">
-        <h2 className="text-sm font-medium tracking-wide text-foreground/45 uppercase">Fotos</h2>
-        {photos.length > 0 ? (
+      {photos.length > 0 ? (
+        <section className="mt-14">
+          <h2 className="text-sm font-medium tracking-wide text-foreground/45 uppercase">Fotos</h2>
           <div className="mt-5">
             <button
               type="button"
@@ -114,8 +114,8 @@ export function EventGallery({ flyers, photos }: { flyers: EventFlyer[]; photos:
               </ul>
             ) : null}
           </div>
-        ) : null}
-      </section>
+        </section>
+      ) : null}
 
       <dialog
         ref={dialogRef}

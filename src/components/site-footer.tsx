@@ -26,6 +26,7 @@ const FOOTER_COLUMNS: FooterGroup[][] = [
 // The sections that already exist; every other link stays a placeholder.
 const FOOTER_HREFS: Record<string, string> = {
   Créditos: "/creditos",
+  "Próximos meetups": "/eventos/proximos",
   "Eventos pasados": "/eventos/pasados",
 };
 
