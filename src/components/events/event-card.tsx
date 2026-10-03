@@ -35,13 +35,15 @@ function LumaMark({ compact }: { compact: boolean }) {
 export function EventCard({
   event,
   presentation,
+  hrefBase = "/eventos/pasados",
   preload = false,
 }: {
   event: PastEventCardData;
   presentation: Presentation;
+  hrefBase?: string;
   preload?: boolean;
 }) {
-  const href = `/eventos/pasados/${event.slug}`;
+  const href = `${hrefBase}/${event.slug}`;
   const list = presentation === "list";
   const feature = presentation === "feature";
 

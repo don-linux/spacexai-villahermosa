@@ -21,7 +21,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Eventos",
     items: [
-      { label: "Próximos meetups", description: "Calendario en Villahermosa", href: "#" },
+      { label: "Próximos meetups", description: "Calendario en Villahermosa", href: "/eventos/proximos" },
       { label: "Talleres", description: "Sesiones prácticas con Grok", href: "#" },
       { label: "Eventos pasados", description: "Grabaciones y fotos", href: "/eventos/pasados" },
     ],

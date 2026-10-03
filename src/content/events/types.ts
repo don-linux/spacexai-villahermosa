@@ -21,6 +21,14 @@ export type PastEvent = {
   lumaUrl?: string;
   cover: EventImage;
   flyers: EventFlyer[];
-  /** First photo is the wide tile at the top of the mosaic. */
+  /**
+   * First photo is the wide tile at the top of the mosaic.
+   * An empty list means the gallery has not arrived yet.
+   */
   photos: EventImage[];
+};
+
+/** A planned meetup. Same card as a past event, without the photo gallery. */
+export type UpcomingMeetup = Omit<PastEvent, "photos" | "lumaUrl"> & {
+  lumaUrl: string;
 };
