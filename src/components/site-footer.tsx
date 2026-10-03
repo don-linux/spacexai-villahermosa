@@ -24,7 +24,10 @@ const FOOTER_COLUMNS: FooterGroup[][] = [
 ];
 
 // The sections that already exist; every other link stays a placeholder.
-const FOOTER_HREFS: Record<string, string> = { Créditos: "/creditos" };
+const FOOTER_HREFS: Record<string, string> = {
+  Créditos: "/creditos",
+  "Eventos pasados": "/eventos/pasados",
+};
 
 export function SiteFooter() {
   return (
