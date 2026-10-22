@@ -1,3 +1,4 @@
+import { BotCradle } from "@/components/bot-cradle";
 import { Hero } from "@/components/hero";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -8,8 +9,11 @@ export default function Home() {
     <IntroGate>
       <SiteHeader />
       {/* 4rem is the sticky header's height, so the hero alone fills the first screen. */}
-      <main className="flex min-h-[calc(100dvh-4rem)] flex-1 flex-col">
-        <Hero />
+      <main className="flex flex-1 flex-col">
+        <div className="flex min-h-[calc(100dvh-4rem)] flex-col">
+          <Hero />
+        </div>
+        <BotCradle />
       </main>
       <SiteFooter />
     </IntroGate>
