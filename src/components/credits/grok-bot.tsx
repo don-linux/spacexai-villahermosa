@@ -17,6 +17,13 @@ type GrokBotProps = {
   expression: ExpressionId;
   /** Page background as hex: it fills the eye holes and fades the particles' depth haze. */
   paper: string;
+  /**
+   * Rest-face states look at the pointer. Scenes that choreograph the expression
+   * (the cradle) turn this off so the gaze does not replace the face.
+   */
+  trackPointer?: boolean;
+  /** Parent names the scene; this drawing should not be its own image. */
+  decorative?: boolean;
 };
 
 /** Hidden tabs suspend rAF; a bounded step keeps the scene from leaping forward on return. */
@@ -27,7 +34,15 @@ const MAX_STEP = 0.064;
  * loop whose gaze follows the pointer. The engine is a pure function of time; this component
  * only owns the clock and the DOM measurements.
  */
-export function GrokBot({ state, shape, color, expression, paper }: GrokBotProps) {
+export function GrokBot({
+  state,
+  shape,
+  color,
+  expression,
+  paper,
+  trackPointer = true,
+  decorative = false,
+}: GrokBotProps) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const maskId = `bot-mask-${uid}`;
   const svgRef = useRef<SVGSVGElement>(null);
@@ -79,6 +94,11 @@ export function GrokBot({ state, shape, color, expression, paper }: GrokBotProps
     };
 
     const aim = (clock: number) => {
+      // A choreographed face owns the gaze; the pointer would replace it.
+      if (!trackPointer) {
+        release(clock);
+        return;
+      }
       // Only rest-face states take a gaze; elsewhere the eye pose is the animation itself.
       if (!STATE_BY_ID.get(engine.state)?.baseFace) {
         release(clock);
@@ -111,23 +131,28 @@ export function GrokBot({ state, shape, color, expression, paper }: GrokBotProps
       setFrame(engine.sample(clockRef.current));
     };
 
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    document.addEventListener("pointerleave", onPointerLeave);
+    if (trackPointer) {
+      window.addEventListener("pointermove", onPointerMove, { passive: true });
+      document.addEventListener("pointerleave", onPointerLeave);
+    }
     raf = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("pointerleave", onPointerLeave);
+      if (trackPointer) {
+        window.removeEventListener("pointermove", onPointerMove);
+        document.removeEventListener("pointerleave", onPointerLeave);
+      }
       release(clockRef.current);
     };
-  }, [engine]);
+  }, [engine, trackPointer]);
 
   return (
     <svg
       ref={svgRef}
       viewBox={`${-VB} ${-VB} ${VB * 2} ${VB * 2}`}
-      role="img"
-      aria-label="Grok Bot animado"
+      role={decorative ? undefined : "img"}
+      aria-label={decorative ? undefined : "Grok Bot animado"}
+      aria-hidden={decorative ? true : undefined}
     >
       <defs>
         {/* The eyes are holes cut into the body, so they clip against the outline on their own. */}
