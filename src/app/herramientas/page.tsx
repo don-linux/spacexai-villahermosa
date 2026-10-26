@@ -1,36 +1,25 @@
 import type { Metadata } from "next";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
-import { TemplateCard } from "@/components/tools/template-card";
-import { COMMUNITY_TEMPLATES } from "@/content/tools/templates";
+import { ToolSectionsBrowser } from "@/components/tools/tool-sections-browser";
+import type { ToolSectionCardData } from "@/components/tools/section-card";
+import { templateCountLabel, TOOL_SECTIONS } from "@/content/tools/sections";
+import { templatesForSection } from "@/content/tools/templates";
 
 export const metadata: Metadata = {
   title: "Herramientas de la comunidad · SpaceXAI Villahermosa",
   description: "Herramientas creadas por la comunidad para la comunidad.",
 };
 
+const sections: ToolSectionCardData[] = TOOL_SECTIONS.map((section) => ({
+  slug: section.slug,
+  title: section.title,
+  description: section.description,
+  countLabel: templateCountLabel(templatesForSection(section.slug).length),
+}));
+
 export default function HerramientasPage() {
   return (
-    <>
-      <SiteHeader />
-      <main className="flex-1">
-        <div className="mx-auto w-full max-w-6xl px-5 py-12 md:px-6 md:py-16">
-          <header>
-            <h1 className="page-title text-4xl md:text-5xl">Herramientas de la comunidad</h1>
-            <p className="mt-3 max-w-xl text-foreground/60">
-              Herramientas creadas por la comunidad para la comunidad
-            </p>
-          </header>
-          <ul className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {COMMUNITY_TEMPLATES.map((template) => (
-              <li key={template.slug} className="min-w-0">
-                <TemplateCard template={template} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </main>
-      <SiteFooter />
-    </>
+    <div className="mx-auto w-full max-w-6xl px-5 py-12 md:px-6 md:py-16">
+      <ToolSectionsBrowser sections={sections} />
+    </div>
   );
 }

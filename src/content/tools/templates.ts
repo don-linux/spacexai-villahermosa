@@ -1,8 +1,10 @@
 import type { ExpressionId } from "@/lib/grok-bot/expressions";
 import type { ColorId, ShapeId } from "@/lib/grok-bot/skins";
+import type { ToolSectionSlug } from "./sections";
 
 export type CommunityTemplate = {
   slug: string;
+  section: ToolSectionSlug;
   name: string;
   author: string;
   description: string;
@@ -21,6 +23,7 @@ export type CommunityTemplate = {
 export const COMMUNITY_TEMPLATES: CommunityTemplate[] = [
   {
     slug: "meetup-desk",
+    section: "plantillas-grok-bot",
     name: "Meetup Desk",
     author: "Comunidad Villahermosa",
     description:
@@ -32,3 +35,7 @@ export const COMMUNITY_TEMPLATES: CommunityTemplate[] = [
     look: { shape: "galet", color: "violet", expression: "curieux" },
   },
 ];
+
+export function templatesForSection(section: ToolSectionSlug): CommunityTemplate[] {
+  return COMMUNITY_TEMPLATES.filter((template) => template.section === section);
+}

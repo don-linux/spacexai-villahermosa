@@ -10,29 +10,43 @@ const subscribeNothing = () => () => {};
 
 const cardFont = { fontFamily: "ui-sans-serif, system-ui, sans-serif" } as const;
 
-export function TemplateCard({ template }: { template: CommunityTemplate }) {
+export function TemplateCard({
+  template,
+  presentation,
+}: {
+  template: CommunityTemplate;
+  presentation: "grid" | "list";
+}) {
   const theme = useResolvedTheme();
   const mounted = useSyncExternalStore(
     subscribeNothing,
     () => true,
     () => false,
   );
+  const list = presentation === "list";
+
+  if (list) {
+    return (
+      <article className="flex flex-col gap-4 rounded-2xl border border-foreground/[0.08] p-3 sm:flex-row sm:items-center">
+        <div className="flex min-w-0 flex-1 items-center gap-4">
+          <BotFace template={template} theme={theme} mounted={mounted} />
+          <div className="min-w-0" style={cardFont}>
+            <h2 className="truncate text-[15px] leading-snug font-medium text-foreground">
+              {template.name}
+            </h2>
+            <p className="mt-0.5 truncate text-[13px] text-foreground/50">{template.author}</p>
+            <p className="mt-1 truncate text-sm text-foreground/70">{template.description}</p>
+          </div>
+        </div>
+        <AddLink href={template.href} />
+      </article>
+    );
+  }
 
   return (
     <article className="flex h-full flex-col rounded-3xl border border-foreground/[0.08] p-5 md:p-6">
       <div className="flex items-center gap-4">
-        <div className="size-20 shrink-0 [&_svg]:block [&_svg]:h-full [&_svg]:w-full" aria-hidden>
-          {mounted ? (
-            <GrokBot
-              state="idle"
-              shape={template.look.shape}
-              color={template.look.color}
-              expression={template.look.expression}
-              paper={PAPER[theme]}
-              decorative
-            />
-          ) : null}
-        </div>
+        <BotFace template={template} theme={theme} mounted={mounted} />
         <div className="min-w-0" style={cardFont}>
           <h2 className="text-xl text-foreground">{template.name}</h2>
           <p className="mt-1 text-sm text-foreground/50">{template.author}</p>
@@ -61,16 +75,47 @@ export function TemplateCard({ template }: { template: CommunityTemplate }) {
         >
           {template.href}
         </a>
-        <a
-          href={template.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="pill pill-solid w-fit"
-        >
-          Anadir a Grok Bot
-        </a>
+        <AddLink href={template.href} />
       </div>
     </article>
+  );
+}
+
+function BotFace({
+  template,
+  theme,
+  mounted,
+}: {
+  template: CommunityTemplate;
+  theme: ResolvedTheme;
+  mounted: boolean;
+}) {
+  return (
+    <div className="size-20 shrink-0 [&_svg]:block [&_svg]:h-full [&_svg]:w-full" aria-hidden>
+      {mounted ? (
+        <GrokBot
+          state="idle"
+          shape={template.look.shape}
+          color={template.look.color}
+          expression={template.look.expression}
+          paper={PAPER[theme]}
+          decorative
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function AddLink({ href }: { href: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="pill pill-solid w-fit shrink-0"
+    >
+      Agregar a Grok Bot
+    </a>
   );
 }
 
