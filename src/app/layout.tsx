@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
+import { CursorPlaylist } from "@/components/cursor-playlist";
 import { ThemeScript } from "@/components/theme-script";
 import "./globals.css";
 
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <style>{`.intro-screen{display:none}[data-intro] .reveal{opacity:1;animation:none}`}</style>
         </noscript>
         {children}
+        <CursorPlaylist />
         <Analytics />
       </body>
     </html>

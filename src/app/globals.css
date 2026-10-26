@@ -299,17 +299,166 @@ html:has([data-intro="pending"]) {
   }
 }
 
+/* Playlist control. Hidden through the intro; the cube spins only while Spotify reports audio. */
+
+body:has([data-intro="pending"]) .cursor-playlist,
+body:has([data-intro="revealing"]) .cursor-playlist {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.cursor-playlist {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 40;
+}
+
+/* The embed API replaces the host with an iframe, so both need to stay out of the layout. */
+.cursor-playlist-embed,
+.cursor-playlist > iframe {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+}
+
+.cursor-playlist-pill {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: calc(2.25rem * 1.15);
+  height: calc(2.25rem * 1.15);
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--foreground) 8%, var(--background));
+  box-shadow: 0 8px 24px var(--surface-shadow);
+  font-size: calc(13px * 1.15);
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  transition: max-width 280ms ease;
+}
+
+.cursor-playlist-pill:hover,
+.cursor-playlist-pill:focus-within {
+  max-width: 42rem;
+}
+
+.cursor-playlist-play {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.cursor-playlist-play:focus-visible,
+.cursor-playlist-spotify:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--foreground) 45%, transparent);
+  outline-offset: 3px;
+}
+
+.cursor-playlist-spin {
+  display: grid;
+  flex: none;
+  place-items: center;
+  /* The pill's 1px border sits inside the box, so the mark fills what's left. */
+  width: calc(2.25rem * 1.15 - 2px);
+  height: calc(2.25rem * 1.15 - 2px);
+}
+
+.cursor-playlist-spin img {
+  display: block;
+  width: auto;
+  height: calc(1.125rem * 1.15);
+}
+
+.cursor-playlist.is-playing .cursor-playlist-spin {
+  animation: cursor-playlist-spin 2.4s linear infinite;
+}
+
+@keyframes cursor-playlist-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cursor-playlist-label,
+.cursor-playlist-spotify {
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.cursor-playlist-pill:hover .cursor-playlist-label,
+.cursor-playlist-pill:hover .cursor-playlist-spotify,
+.cursor-playlist-pill:focus-within .cursor-playlist-label,
+.cursor-playlist-pill:focus-within .cursor-playlist-spotify {
+  opacity: 1;
+}
+
+.cursor-playlist-label {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.4rem;
+  padding-right: 0.35rem;
+  white-space: nowrap;
+}
+
+.cursor-playlist-cursor-word {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+.cursor-playlist-cursor-word img {
+  display: block;
+  width: auto;
+  height: 0.95em;
+}
+
+.cursor-playlist-spotify {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.4rem;
+  height: 100%;
+  padding-right: calc(0.7rem * 1.15);
+  padding-left: 0.15rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cursor-playlist-spotify img {
+  display: block;
+  flex: none;
+  width: auto;
+  height: 1.45em;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .spacexai-wordmark,
   .dropdown-panel,
   .mobile-menu,
   [data-intro="revealing"] .reveal,
-  [data-intro="done"] .reveal {
+  [data-intro="done"] .reveal,
+  .cursor-playlist.is-playing .cursor-playlist-spin {
     animation: none;
   }
 
   .nav-logo-label,
-  .luma-ticket-poster {
+  .luma-ticket-poster,
+  .cursor-playlist-pill,
+  .cursor-playlist-label,
+  .cursor-playlist-spotify {
     transition: none;
   }
 
