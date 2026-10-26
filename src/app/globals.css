@@ -228,6 +228,16 @@ html:has([data-intro="pending"]) {
     vertical-align: baseline;
   }
 
+  /* Replaces the words "Grok Bot" inside the cradle heading. */
+  .grok-home-wordmark {
+    display: inline-block;
+    height: 1.08em;
+    width: auto;
+    aspect-ratio: 317.7 / 60.94;
+    margin-inline: 0.16em 0;
+    vertical-align: -0.16em;
+  }
+
   .hero-underline {
     text-decoration-line: underline;
     text-decoration-color: color-mix(in oklab, var(--foreground) 35%, transparent);

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { GrokBot } from "@/components/credits/grok-bot";
+import { GrokBotWordmark } from "@/components/credits/grok-bot-wordmark";
 import type { ExpressionId } from "@/lib/grok-bot/expressions";
 import type { ColorId, ShapeId } from "@/lib/grok-bot/skins";
 import { usePrefersReducedMotion } from "@/lib/spacexai-rive";
@@ -241,7 +242,7 @@ export function BotCradle() {
     >
       <header className="mx-auto max-w-2xl text-center">
         <h2 id="grok-bot-home" className="page-title text-3xl text-foreground md:text-4xl">
-          El hogar de los meetups de Grok Bot
+          El hogar de los meetups de <GrokBotWordmark className="grok-home-wordmark" />
         </h2>
         <p className="mt-3 text-base text-pretty text-foreground/60 md:text-lg">
           Aprende las novedades de Grok Bot, en la comunidad de Villahermosa.
