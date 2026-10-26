@@ -270,6 +270,93 @@ html:has([data-intro="pending"]) {
     height: 100%;
   }
 
+  /* X logo in place of the letter. Larger than the cap so the diagonals stay crisp. */
+  .x-home-mark {
+    display: inline-block;
+    width: auto;
+    height: 1.2em;
+    aspect-ratio: 1200 / 1227;
+    margin-inline: 0.1em 0.04em;
+    vertical-align: -0.16em;
+  }
+
+  .x-home-mark svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Two accounts, then three. One row of five once the wordmarks fit. */
+  .x-home-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 2.75rem 1.25rem;
+  }
+
+  .x-home-grid > :nth-child(-n + 2) {
+    grid-column: span 3;
+  }
+
+  .x-home-grid > :nth-child(n + 3) {
+    grid-column: span 2;
+  }
+
+  @media (min-width: 64rem) {
+    .x-home-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      column-gap: 1rem;
+    }
+
+    .x-home-grid > :nth-child(-n + 2),
+    .x-home-grid > :nth-child(n + 3) {
+      grid-column: auto;
+    }
+  }
+
+  .x-home-account {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    border-radius: 1rem;
+  }
+
+  .x-home-account:hover .pill-solid,
+  .x-home-account:focus-visible .pill-solid {
+    background: var(--pill-solid-hover);
+  }
+
+  .x-home-account:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--foreground) 45%, transparent);
+    outline-offset: 4px;
+  }
+
+  .x-home-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 2.75rem;
+  }
+
+  .x-home-logo img,
+  .x-home-logo svg {
+    display: block;
+    width: auto;
+    height: 1.7rem;
+    max-width: 100%;
+  }
+
+  /* The Grok file's viewBox has padding above the letters. */
+  .x-home-logo img[src*="Grok_Wordmark"] {
+    height: 2.15rem;
+  }
+
+  .x-home-logo .x-home-logo-x {
+    width: auto;
+    height: 2.75rem;
+  }
+
   .hero-underline {
     text-decoration-line: underline;
     text-decoration-color: color-mix(in oklab, var(--foreground) 35%, transparent);
