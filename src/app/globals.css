@@ -238,6 +238,22 @@ html:has([data-intro="pending"]) {
     vertical-align: -0.16em;
   }
 
+  /* Replaces the word "Cursor" inside the homepage heading. */
+  .cursor-home-wordmark {
+    display: inline-block;
+    height: 1.08em;
+    width: auto;
+    aspect-ratio: 1655.29 / 278.83;
+    margin-inline: 0.16em 0;
+    vertical-align: -0.16em;
+  }
+
+  .cursor-home-wordmark img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
   .hero-underline {
     text-decoration-line: underline;
     text-decoration-color: color-mix(in oklab, var(--foreground) 35%, transparent);
@@ -399,6 +415,22 @@ body:has([data-intro="revealing"]) .cursor-playlist {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Display size of the header clip (498×544, sample aspect 497:498). */
+.cursor-home-cube {
+  position: relative;
+  width: 11rem;
+  aspect-ratio: 497 / 544;
+}
+
+.cursor-home-cube video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .cursor-playlist-label,

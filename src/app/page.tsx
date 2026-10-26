@@ -1,4 +1,5 @@
 import { BotCradle } from "@/components/bot-cradle";
+import { CursorHome } from "@/components/cursor-home";
 import { Hero } from "@/components/hero";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -14,6 +15,7 @@ export default function Home() {
           <Hero />
         </div>
         <BotCradle />
+        <CursorHome />
       </main>
       <SiteFooter />
     </IntroGate>
