@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { GrokBotMark } from "@/components/grok-bot-mark";
 import type { CommunityTemplate } from "@/content/tools/templates";
 import { TemplateCard } from "./template-card";
 
@@ -28,7 +29,10 @@ export function TemplateBrowser({
       </Link>
       <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <header>
-          <h1 className="page-title text-4xl md:text-5xl">{title}</h1>
+          <div className="flex items-center gap-4">
+            <GrokBotMark id="01" className="size-12 md:size-14" />
+            <h1 className="page-title min-w-0 text-4xl md:text-5xl">{title}</h1>
+          </div>
           <p className="mt-3 max-w-xl text-foreground/60">{description}</p>
         </header>
         <div

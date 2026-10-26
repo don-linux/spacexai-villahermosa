@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EventCard, type PastEventCardData } from "@/components/events/event-card";
+import { GROK_BOT_SILHOUETTE_MARKS, GrokBotMark } from "@/components/grok-bot-mark";
 import { upcomingMeetup } from "@/content/events/upcoming";
 
 export const metadata: Metadata = {
@@ -41,7 +42,14 @@ export default function UpcomingMeetupsPage() {
           </li>
         </ul>
       ) : (
-        <p className="mt-10 max-w-xl text-foreground/60">{EMPTY_COPY}</p>
+        <div className="mt-10">
+          <div className="flex flex-wrap gap-3" aria-hidden>
+            {GROK_BOT_SILHOUETTE_MARKS.map((id) => (
+              <GrokBotMark key={id} id={id} className="size-12" />
+            ))}
+          </div>
+          <p className="mt-6 max-w-xl text-foreground/60">{EMPTY_COPY}</p>
+        </div>
       )}
     </div>
   );
