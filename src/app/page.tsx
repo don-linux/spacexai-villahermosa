@@ -1,5 +1,6 @@
 import { BotCradle } from "@/components/bot-cradle";
 import { CursorHome } from "@/components/cursor-home";
+import { GrokModel } from "@/components/grok-model";
 import { Hero } from "@/components/hero";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -16,6 +17,7 @@ export default function Home() {
         </div>
         <BotCradle />
         <CursorHome />
+        <GrokModel />
       </main>
       <SiteFooter />
     </IntroGate>

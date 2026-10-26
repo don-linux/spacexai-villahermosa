@@ -254,6 +254,22 @@ html:has([data-intro="pending"]) {
     height: 100%;
   }
 
+  /* Replaces the word "Grok" inside the model heading. The file's viewBox is 1024×400. */
+  .grok-model-wordmark {
+    display: inline-block;
+    height: 0.92em;
+    width: auto;
+    aspect-ratio: 1024 / 400;
+    margin-inline: 0.12em 0;
+    vertical-align: -0.12em;
+  }
+
+  .grok-model-wordmark img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
   .hero-underline {
     text-decoration-line: underline;
     text-decoration-color: color-mix(in oklab, var(--foreground) 35%, transparent);
@@ -431,6 +447,21 @@ body:has([data-intro="revealing"]) .cursor-playlist {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+/* Official Grok logomark, square viewBox 1024×1024. */
+.grok-model-mark {
+  position: relative;
+  width: 8.5rem;
+  aspect-ratio: 1;
+}
+
+.grok-model-mark img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .cursor-playlist-label,
