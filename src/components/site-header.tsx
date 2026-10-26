@@ -13,7 +13,9 @@ type NavLink = {
   icon?: MenuIcon;
   external?: boolean;
 };
-type NavItem = { label: string; href: string } | { label: string; items: NavLink[] };
+type NavItem =
+  | { label: string; href: string; external?: boolean }
+  | { label: string; items: NavLink[] };
 
 // Placeholder navigation until the real sections exist.
 const NAV_ITEMS: NavItem[] = [
@@ -28,21 +30,38 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Eventos",
     items: [
-      { label: "Próximos meetups", description: "Calendario en Villahermosa", href: "/eventos/proximos" },
-      { label: "Talleres", description: "Sesiones prácticas con Grok", href: "#" },
+      {
+        label: "Próximos meetups",
+        description: "Calendario en Villahermosa",
+        href: "/eventos/proximos",
+      },
       { label: "Eventos pasados", description: "Grabaciones y fotos", href: "/eventos/pasados" },
     ],
   },
   {
     label: "Recursos",
     items: [
-      { label: "Guías", description: "Para empezar a construir", href: "#" },
-      { label: "API de SpaceXAI", description: "Documentación oficial", href: "#" },
-      { label: "Herramientas", description: "Lo que usa la comunidad", href: "#" },
+      {
+        label: "API de SpaceXAI",
+        description: "Modelos, precios y llaves",
+        href: "https://x.ai/api",
+        external: true,
+      },
+      {
+        label: "Documentacion de SpaceXAI",
+        description: "Referencia oficial",
+        href: "https://docs.x.ai/overview",
+        external: true,
+      },
+      {
+        label: "Herramientas de la comunidad",
+        description: "Herramientas creadas por la comunidad para la comunidad",
+        href: "/herramientas",
+      },
     ],
   },
   { label: "Créditos", href: "/creditos" },
-  { label: "Noticias", href: "#" },
+  { label: "Novedades de xAI", href: "https://x.ai/news", external: true },
 ];
 
 const CONTACT_LINKS: NavLink[] = [
@@ -176,7 +195,11 @@ export function SiteHeader() {
                   </li>
                 ) : (
                   <li key={item.label}>
-                    <a href={item.href} className="nav-link">
+                    <a
+                      href={item.href}
+                      className="nav-link"
+                      {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    >
                       {item.label}
                     </a>
                   </li>
@@ -508,13 +531,11 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
               <ul className="mt-2 flex flex-col">
                 {item.items.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href={link.href}
-                      onClick={onNavigate}
-                      className="block rounded-lg px-1 py-2 text-lg text-foreground/90 hover:text-foreground"
-                    >
-                      {link.label}
-                    </a>
+                    <MenuAnchor
+                      link={link}
+                      onNavigate={onNavigate}
+                      className="block rounded-lg px-1 py-2.5 hover:bg-foreground/[0.06]"
+                    />
                   </li>
                 ))}
               </ul>
@@ -524,6 +545,7 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
               <a
                 href={item.href}
                 onClick={onNavigate}
+                {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className="block rounded-lg px-1 py-1 text-lg text-foreground/90 hover:text-foreground"
               >
                 {item.label}

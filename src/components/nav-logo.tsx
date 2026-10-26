@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { CSSProperties, PointerEvent } from "react";
+import type { CSSProperties } from "react";
 import { Alignment, Fit, Layout, useRive } from "@rive-app/react-canvas";
 import { useLandingRevealed } from "@/app/intro-gate";
 import {
@@ -46,7 +46,6 @@ export function NavLogo() {
   const theme = useResolvedTheme();
   const [isArmed, setIsArmed] = useState(false);
   const [mode, setMode] = useState<Mode>("waiting");
-  const [replays, setReplays] = useState(0);
 
   useEffect(() => {
     if (!revealed || reduceMotion) return;
@@ -62,18 +61,11 @@ export function NavLogo() {
   const effectiveMode: Mode = reduceMotion || theme === "light" ? "static" : mode;
   const showLabel = effectiveMode === "settled" || effectiveMode === "static";
 
-  const replay = (event: PointerEvent) => {
-    if (event.pointerType !== "mouse" || effectiveMode !== "settled") return;
-    setMode("playing");
-    setReplays((count) => count + 1);
-  };
-
   return (
     <a
       href="/"
       className="flex items-center gap-3 rounded-md outline-offset-4"
       aria-label="SpaceXAI Villahermosa, inicio"
-      onPointerEnter={replay}
     >
       <span className="relative block shrink-0" style={{ width: MARK_WIDTH, height: MARK_HEIGHT }}>
         {effectiveMode === "static" ? (
@@ -94,12 +86,7 @@ export function NavLogo() {
             />
           </>
         ) : isArmed ? (
-          <NavRive
-            replays={replays}
-            onPlay={handlePlay}
-            onSettled={handleSettled}
-            onFail={handleFail}
-          />
+          <NavRive onPlay={handlePlay} onSettled={handleSettled} onFail={handleFail} />
         ) : null}
       </span>
       <span
@@ -116,12 +103,10 @@ export function NavLogo() {
 }
 
 function NavRive({
-  replays,
   onPlay,
   onSettled,
   onFail,
 }: {
-  replays: number;
   onPlay: () => void;
   onSettled: () => void;
   onFail: () => void;
@@ -142,12 +127,7 @@ function NavRive({
     return () => window.clearTimeout(timer);
   }, [rive, onFail]);
 
-  useEffect(() => {
-    if (!rive || replays === 0) return;
-    rive.reset({ artboard: RIVE_ARTBOARD, stateMachine: RIVE_STATE_MACHINE, autoplay: true });
-  }, [rive, replays]);
-
-  useRiveSettled(rive, onSettled, replays);
+  useRiveSettled(rive, onSettled);
 
   return <RiveComponent aria-hidden style={canvasStyle} />;
 }

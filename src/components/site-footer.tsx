@@ -8,13 +8,13 @@ const FOOTER_COLUMNS: FooterGroup[][] = [
     { title: "Comunidad", links: ["Sobre nosotros", "Créditos", "Código de conducta"] },
     { title: "Organizadores", links: ["Equipo", "Voluntariado", "Patrocinios"] },
   ],
+  [{ title: "Eventos", links: ["Próximos meetups", "Eventos pasados", "Calendario"] }],
   [
-    { title: "Eventos", links: ["Próximos meetups", "Eventos pasados", "Calendario"] },
-    { title: "Talleres", links: ["Grok", "API de SpaceXAI", "Hackathons"] },
-  ],
-  [
-    { title: "Recursos", links: ["Guías", "Documentación", "Noticias"] },
-    { title: "Herramientas", links: ["Plantillas", "Ejemplos", "Lo que usa la comunidad"] },
+    {
+      title: "Recursos",
+      links: ["API de SpaceXAI", "Documentacion de SpaceXAI", "Novedades de xAI"],
+    },
+    { title: "Herramientas", links: ["Herramientas de la comunidad"] },
   ],
   [
     { title: "Únete", links: ["Discord", "WhatsApp", "Newsletter"] },
@@ -28,6 +28,10 @@ const FOOTER_HREFS: Record<string, string> = {
   Créditos: "/creditos",
   "Próximos meetups": "/eventos/proximos",
   "Eventos pasados": "/eventos/pasados",
+  "API de SpaceXAI": "https://x.ai/api",
+  "Documentacion de SpaceXAI": "https://docs.x.ai/overview",
+  "Novedades de xAI": "https://x.ai/news",
+  "Herramientas de la comunidad": "/herramientas",
 };
 
 export function SiteFooter() {
@@ -64,16 +68,21 @@ export function SiteFooter() {
                 <div key={group.title}>
                   <h2 className="text-[13px] font-medium text-foreground">{group.title}</h2>
                   <ul className="mt-3 flex flex-col gap-2.5">
-                    {group.links.map((label) => (
-                      <li key={label}>
-                        <a
-                          href={FOOTER_HREFS[label] ?? "#"}
-                          className="text-[13px] text-foreground/55 transition-colors hover:text-foreground"
-                        >
-                          {label}
-                        </a>
-                      </li>
-                    ))}
+                    {group.links.map((label) => {
+                      const href = FOOTER_HREFS[label] ?? "#";
+                      const external = href.startsWith("http");
+                      return (
+                        <li key={label}>
+                          <a
+                            href={href}
+                            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                            className="text-[13px] text-foreground/55 transition-colors hover:text-foreground"
+                          >
+                            {label}
+                          </a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               ))}

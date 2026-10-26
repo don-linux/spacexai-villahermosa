@@ -236,10 +236,18 @@ export function BotCradle() {
   return (
     <section
       ref={sectionRef}
-      aria-label="Cinco bots en una cuna. La cara cruza de un extremo al otro."
-      className="px-5 pt-2 pb-28 md:px-6"
+      aria-labelledby="grok-bot-home"
+      className="px-5 pt-8 pb-28 md:px-6 md:pt-12"
     >
-      <div aria-hidden className="mx-auto w-full max-w-[44rem]" style={stageStyle}>
+      <header className="mx-auto max-w-2xl text-center">
+        <h2 id="grok-bot-home" className="page-title text-3xl text-foreground md:text-4xl">
+          El hogar de los meetups de Grok Bot
+        </h2>
+        <p className="mt-3 text-base text-pretty text-foreground/60 md:text-lg">
+          Aprende las novedades de Grok Bot, en la comunidad de Villahermosa.
+        </p>
+      </header>
+      <div aria-hidden className="mx-auto mt-10 w-full max-w-[44rem] md:mt-14" style={stageStyle}>
         <div className="flex items-start justify-center" style={rowStyle}>
           {COLORS.map((color, index) => {
             const look = looks[index] ?? REST;
